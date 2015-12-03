@@ -13,13 +13,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <title>iron-page-url</title>
 
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../../polymer/polymer.html">
   <link rel="import" href="../iron-page-url.html">
-  <link rel="import" href="../iron-query-params.html">
   <link rel="import" href="../../paper-styles/typography.html">
   <link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
   <link rel="import" href="../../paper-input/paper-input.html">
   <link rel="import" href="../../paper-slider/paper-slider.html">
-  <link rel="import" href="../../paper-button/paper-button.html">
   <link rel="stylesheet" href="../../paper-styles/demo.css">
 </head>
 <body>
@@ -50,13 +49,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         .container {
           @apply(--layout-horizontal);
         }
-
       </style>
       <iron-page-url path="{{path}}" hash="{{hash}}" query="{{query}}"
                      dwell-time="{{dwellTime}}">
       </iron-page-url>
-      <iron-query-params params-string="{{query}}" params-object="{{params}}">
-      </iron-query-params>
 
       <div class="container">
         <div class="inputs">
@@ -65,10 +61,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-input>
           <paper-input label="hash" value="{{hash}}" always-float-label>
           </paper-input>
-          <paper-input label="params" value="{{paramsString}}"
-                       invalid="{{paramsInvalid}}"
-                       error-message="Should be legal JSON"
-                       always-float-label>
+          <paper-input label='query' value='{{query}}' always-float-label>
           </paper-input>
         </div>
         <div class="history_entries">
@@ -91,55 +84,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-slider>
         </div>
       </div>
-      <div class="container">
-        <a href="#lolol😹"><paper-button raised>#lolol😹</paper-button></a>
-        <a href="?hi=there&some=none#wat_for"><div>{"hi": "there", "some": "none"}, #wat_for</div></a>
-      </div>
     </template>
     <script>
       Polymer({
         is: 'iron-page-url-demo',
         properties: {
-          paramsString: {
-            observer: 'paramsStringChanged'
-          },
-          params: {
-            observer: 'paramsChanged'
-          },
-          paramsInvalid: {
-            value: false,
-          },
           historyElementsAdded: {
             type: Number
           }
         },
         observers: [
-          'checkHistorySize(path, hash, paramsString)'
+          'checkHistorySize(path, hash, query, startingHistoryLength)'
         ],
         ready: function() {
           this.startingHistoryLength = window.history.length;
-        },
-        paramsStringChanged: function() {
-          if (this.ignore) {
-            return;
-          }
-          this.ignore = true;
-          try {
-            this.params = JSON.parse(this.paramsString);
-            this.paramsInvalid = false;
-          } catch(_) {
-            this.paramsInvalid = true;
-          }
-          this.ignore = false;
-        },
-        paramsChanged: function() {
-          if (this.ignore) {
-            return;
-          }
-          this.ignore = true;
-          this.paramsString = JSON.stringify(this.params);
-          this.paramsInvalid = false;
-          this.ignore = false;
         },
         checkHistorySize: function() {
           this.historyElementsAdded =
